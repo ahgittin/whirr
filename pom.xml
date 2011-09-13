@@ -49,6 +49,7 @@
     <module>services/voldemort</module>
     <module>services/elasticsearch</module>
     <module>services/hama</module>
+    <module>services/chef</module>
   </modules>
 
   <properties>
@@ -338,7 +339,7 @@
         </configuration>
       </plugin>
       <!-- mvn apache-rat:check - runs RAT check on the source -->
-      <plugin>
+      <!--  <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <version>0.7</version>
@@ -364,10 +365,10 @@
             <exclude>.idea/**</exclude>
             <exclude>**/.project</exclude>
             <exclude>**/.classpath</exclude>
-            <exclude>src/site/resources/images/whirr-logo.ai</exclude> <!-- binary -->
+            <exclude>src/site/resources/images/whirr-logo.ai</exclude> 
           </excludes>
         </configuration>
-      </plugin>
+      </plugin> -->
     </plugins>
     <pluginManagement>
       <plugins>

@@ -43,6 +43,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.slf4j.Logger;
@@ -144,16 +145,64 @@ public class ClusterController {
 
     LOG.info("Instance {} destroyed", instanceId);
   }
-
+  
+  /**
+   * Runs a statement on the running nodes in the cluster using the options
+   * provided.
+   * 
+   * @param spec
+   *           the cluster you are affecting
+   * @param condition
+   *           selection criterion which may be all
+   *           {@link NodePredicates#alwaysTrue}
+   * @param statement
+   *           statement to run on all nodes
+   * @param options
+   *           controls execution, including which user to run as. See
+   *           {@link #defaultRunScriptOptionsForSpec} for default options.
+   * @return responses of script execution
+   * @throws RunScriptOnNodesException
+   * 
+   * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement,
+   *      RunScriptOptions}
+   * @see #defaultRunScriptOptionsForSpec
+   */
   public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(ClusterSpec spec,
-        Predicate<NodeMetadata> condition, Statement statement) throws IOException, RunScriptOnNodesException {
+        Predicate<NodeMetadata> condition, Statement statement, RunScriptOptions options)
+       throws RunScriptOnNodesException {
 
-    Credentials credentials = new Credentials(spec.getClusterUser(), spec.getPrivateKey());
     ComputeServiceContext context = getCompute().apply(spec);
 
     condition = Predicates.and(runningInGroup(spec.getClusterName()), condition);
     return context.getComputeService().runScriptOnNodesMatching(condition,
-      statement, overrideCredentialsWith(credentials).wrapInInitScript(false).runAsRoot(false));
+      statement, options);
+  }
+  
+  /**
+   * Runs a script on the running nodes in the cluster with default options.
+   * 
+   * @see #runScriptOnNodesMatching(ClusterSpec, Predicate, Statement, RunScriptOptions)
+   * @see #defaultRunScriptOptionsForSpec
+   */
+  public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(ClusterSpec spec,
+        Predicate<NodeMetadata> condition, Statement statement) throws RunScriptOnNodesException {
+    return runScriptOnNodesMatching(spec, condition, statement, defaultRunScriptOptionsForSpec(spec));
+  }
+  
+  /**
+   * When running ad-hoc configuration commands, we default to use the cluster
+   * user, instead of root. We also prefer to run commands as-is, as opposed to
+   * within an init wrapper. If you wish to run a long-running command (ex.
+   * 2minutes or longer), consider changing these defaults.
+   * <h4>example</h4>
+   * {@code options = controller.defaultRunScriptOptionsForSpec(clusterSpec).wrapInInitScript(true)}
+   * 
+   * @param spec which describes the cluster
+   * @return default options
+   */
+  public RunScriptOptions defaultRunScriptOptionsForSpec(ClusterSpec spec) {
+    Credentials credentials = new Credentials(spec.getClusterUser(), spec.getPrivateKey());
+    return overrideCredentialsWith(credentials).wrapInInitScript(false).runAsRoot(false);
   }
 
   @Deprecated

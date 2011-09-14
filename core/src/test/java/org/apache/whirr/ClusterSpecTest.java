@@ -21,13 +21,6 @@ package org.apache.whirr;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-import com.jcraft.jsch.JSchException;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -45,6 +38,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.whirr.util.KeyPair;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
+import com.jcraft.jsch.JSchException;
 
 public class ClusterSpecTest {
   
@@ -220,6 +220,24 @@ public class ClusterSpecTest {
     Set<String> expected = Sets.newLinkedHashSet(Arrays.asList(new String[]{
         "hadoop-namenode", "hadoop-jobtracker", "hadoop-tasktracker",
         "hadoop-datanode", "zookeeper"}));
+    assertThat(template.getRoles(), is(expected));
+  }
+
+  @Test
+  public void testApplySubroleAliases() {
+    CompositeConfiguration c = new CompositeConfiguration();
+    Configuration config = new PropertiesConfiguration();
+    config.addProperty("whirr.instance-templates", 
+        "1 puppet:somepup::pet+something-else, 1 something-else-only");
+    c.addConfiguration(config);    
+    InstanceTemplate template = InstanceTemplate.parse(c).get(0);
+    Set<String> expected = Sets.newLinkedHashSet(Arrays.asList(new String[]{
+        "puppet:somepup::pet", "something-else"}));
+    assertThat(template.getRoles(), is(expected));
+    
+    InstanceTemplate template2 = InstanceTemplate.parse(c).get(1);
+    Set<String> expected2 = Sets.newLinkedHashSet(Arrays.asList(new String[]{
+        "something-else-only"}));
     assertThat(template.getRoles(), is(expected));
   }
 

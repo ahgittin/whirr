@@ -68,11 +68,7 @@ public abstract class ScriptBasedClusterAction extends ClusterAction {
 
       eventMap.put(instanceTemplate, event);
       for (String role : instanceTemplate.getRoles()) {
-        ClusterActionHandler handler = handlerMap.get(role);
-        if (handler == null) {
-          throw new IllegalArgumentException("No handler for role " + role);
-        }
-        handler.beforeAction(event);
+        getHandlerForRole(role).beforeAction(event);
       }
       newCluster = event.getCluster(); // cluster may have been updated by handler 
     }
@@ -84,10 +80,8 @@ public abstract class ScriptBasedClusterAction extends ClusterAction {
 
     for (InstanceTemplate instanceTemplate : clusterSpec.getInstanceTemplates()) {
       for (String role : instanceTemplate.getRoles()) {
-        ClusterActionHandler handler = handlerMap.get(role);
-        if (handler == null) {
-          throw new IllegalArgumentException("No handler for role " + role);
-        }
+        ClusterActionHandler handler = getHandlerForRole(role);
+        // TODO alex.heneveld@cloudsoftcorp.com wonders why we do the event lookup and cluster mangling _in_ the roles loop here, but _out_ of the roles loop above
         ClusterActionEvent event = eventMap.get(instanceTemplate);
         event.setCluster(newCluster);
         handler.afterAction(event);
@@ -98,4 +92,19 @@ public abstract class ScriptBasedClusterAction extends ClusterAction {
     return newCluster;
   }
 
+  protected ClusterActionHandler getHandlerForRole(String role) {
+    ClusterActionHandler handler = handlerMap.get(role);
+    if (handler == null) {
+      int subroleIndex = role.indexOf(':');
+      if (subroleIndex>0) {
+        // match e.g. puppet: if role is puppet:module
+        handler = handlerMap.get(role.substring(0, subroleIndex+1));
+      }
+    }
+    if (handler == null) {
+      throw new IllegalArgumentException("No handler for role " + role);
+    }
+    return handler;
+  }
+  
 }

@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.whirr.Cluster;
 import org.apache.whirr.ClusterAction;
@@ -55,20 +56,26 @@ public abstract class ScriptBasedClusterAction extends ClusterAction {
   public Cluster execute(ClusterSpec clusterSpec, Cluster cluster) throws IOException, InterruptedException {
     
     Map<InstanceTemplate, ClusterActionEvent> eventMap = Maps.newHashMap();
+    Map<InstanceTemplate, AtomicReference<String>> eventRoleMap = Maps.newHashMap();
     Cluster newCluster = cluster;
     for (InstanceTemplate instanceTemplate : clusterSpec.getInstanceTemplates()) {
       StatementBuilder statementBuilder = new StatementBuilder();
 
+      AtomicReference<String> roleInEvent = new AtomicReference<String>(null);
       ComputeServiceContext computServiceContext = getCompute().apply(clusterSpec);
       FirewallManager firewallManager = new FirewallManager(computServiceContext,
           clusterSpec, newCluster);
-
+      
       ClusterActionEvent event = new ClusterActionEvent(getAction(),
-          clusterSpec, newCluster, statementBuilder, getCompute(), firewallManager);
+          clusterSpec, newCluster, roleInEvent, statementBuilder, getCompute(), firewallManager);
 
       eventMap.put(instanceTemplate, event);
+      eventRoleMap.put(instanceTemplate, roleInEvent);
+      
       for (String role : instanceTemplate.getRoles()) {
+        roleInEvent.set(role);
         getHandlerForRole(role).beforeAction(event);
+        roleInEvent.set(null);
       }
       newCluster = event.getCluster(); // cluster may have been updated by handler 
     }
@@ -79,12 +86,15 @@ public abstract class ScriptBasedClusterAction extends ClusterAction {
     newCluster = Iterables.get(eventMap.values(), 0).getCluster();
 
     for (InstanceTemplate instanceTemplate : clusterSpec.getInstanceTemplates()) {
+      AtomicReference<String> roleInEvent = eventRoleMap.get(instanceTemplate);
       for (String role : instanceTemplate.getRoles()) {
         ClusterActionHandler handler = getHandlerForRole(role);
         // TODO alex.heneveld@cloudsoftcorp.com wonders why we do the event lookup and cluster mangling _in_ the roles loop here, but _out_ of the roles loop above
         ClusterActionEvent event = eventMap.get(instanceTemplate);
         event.setCluster(newCluster);
+        roleInEvent.set(role);
         handler.afterAction(event);
+        roleInEvent.set(null);
         newCluster = event.getCluster(); // cluster may have been updated by handler 
       }
     }

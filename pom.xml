@@ -55,6 +55,7 @@
     <module>services/chef</module>
     <module>services/mahout</module>
     <module>services/pig</module>
+    <module>services/c4tgz</module>
     <module>platforms/karaf</module>
   </modules>
 

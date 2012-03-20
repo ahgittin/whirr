@@ -53,17 +53,17 @@ public class RunC4PreFilesPostSequence implements Statement {
     Builder<Statement> statements = ImmutableList.<Statement> builder();
 
     for (String role: roles) {
-    	String moduleName = role.substring(role.lastIndexOf(':')+1);
-    	statements.add(exec(
-    			"cd " + MODULES_DIR + "/" + moduleName + "/" + "scripts/pre.d && "+
-    			"echo pre loop && ( for x in * ; do chmod +x $x ; sudo ./$x ; done ) || exit 9") /*.failOnNonzeroReturnCode()*/ );
-    	
-    	statements.add(exec(
-    			"sudo cp -r " + MODULES_DIR + "/" + moduleName + "/" + "files/* /"));
-    	
-    	statements.add(exec(
-    			"cd " + MODULES_DIR + "/" + moduleName + "/" + "scripts/post.d && "+
-    			"echo post loop && ( for x in * ; do chmod +x $x ; sudo ./$x ; done ) || exit 9") /*.failOnNonzeroReturnCode()*/ );
+      String moduleName = role.substring(role.lastIndexOf(':')+1);
+      statements.add(exec(
+          "cd " + MODULES_DIR + "/" + moduleName + "/" + "scripts/pre.d && "+
+          "echo pre loop && ( for x in * ; do chmod +x $x ; sudo ./$x ; done ) || exit 9") /*.failOnNonzeroReturnCode()*/ );
+
+      statements.add(exec(
+          "sudo cp -r " + MODULES_DIR + "/" + moduleName + "/" + "files/* /"));
+
+      statements.add(exec(
+          "cd " + MODULES_DIR + "/" + moduleName + "/" + "scripts/post.d && "+
+          "echo post loop && ( for x in * ; do chmod +x $x ; sudo ./$x ; done ) || exit 9") /*.failOnNonzeroReturnCode()*/ );
     }
 
     return new StatementList(statements.build()).render(arg0);

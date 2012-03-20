@@ -18,8 +18,6 @@
 
 package org.apache.whirr.service.c4tgz;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
-
 import java.io.IOException;
 
 import org.apache.whirr.service.ClusterActionEvent;

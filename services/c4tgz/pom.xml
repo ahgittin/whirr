@@ -24,7 +24,18 @@
   </parent>
   <artifactId>whirr-c4tgz</artifactId>
   <packaging>bundle</packaging>
-  <name>Apache Whirr Channel 4 TarGz Support</name>
+  <name>Apache Whirr Channel 4 TarGz Package Format Support</name>
+  <properties>
+    <osgi.import>
+      !org.apache.whirr.service.c4tgz*,
+      org.apache.commons.configuration*;version="[1.6,2)",
+      *
+    </osgi.import>
+    <osgi.export>
+      org.apache.whirr.service.c4tgz*;version="${project.version}"
+    </osgi.export>
+    <osgi.fragment.host>jclouds-scriptbuilder;bundle-version="${jclouds.osgi.version.clean}"</osgi.fragment.host>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

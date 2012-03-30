@@ -13,6 +13,8 @@ Trunk (unreleased changes)
 
   IMPROVEMENTS
 
+    WHIRR-370. Templating for configuration files (kve)
+
     WHIRR-556. Improve the 'Running on $PROVIDER using $IDENTITY' message (kve)
 
     WHIRR-514. Avoid hardcoded Whirr version number in karaf tests (kve)
@@ -76,6 +78,14 @@ Trunk (unreleased changes)
     WHIRR-464. Do not fail if whirr.cluster-user already exists on the 
     remote machine (Rodrigo Duarte Sousa via Andrei Savu)
 
+    WHIRR-374. Enforce Maven 3 (Tom White via Andrei Savu)
+
+    WHIRR-565. Add .checktyle files created by eclipse-checkstyle-plugin to rat excludes (David Alves)
+
+    WHIRR-563. Disable password based authentication (Rodrigo Duarte Sousa via Andrei Savu)
+
+    WHIRR-504. Upgrade to jclouds 1.4.0 (Adrian Cole, Andrei Savu)
+
   BUG FIXES
 
     WHIRR-555. Fix java install script: $(...) -> `...` (kve)
@@ -95,6 +105,10 @@ Trunk (unreleased changes)
     support (Ioannis Canellos, Andrei Savu)
 
     WHIRR-549. Remove dependency on system SSH keys in tests (Frank Scholten)
+
+    WHIRR-570. Site generation fails for YARN. (tomwhite)
+
+    WHIRR-572. Ensure ZooKeeper data directories are created. (tomwhite)
 
 Release 0.7.1 - 2012-02-23
 

@@ -22,6 +22,9 @@ package org.apache.whirr.net;
  * Generic dns resolution exception
  */
 public class DnsException extends RuntimeException {
+
+  private static final long serialVersionUID = 3615182336811732309L;
+
   public DnsException(Throwable e) {
     super(e);
   }

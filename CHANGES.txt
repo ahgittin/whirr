@@ -4,6 +4,8 @@ Trunk (unreleased changes)
 
   NEW FEATURES
 
+    WHIRR-465. Add Solr as a service.
+
     WHIRR-500. Let users control which hardware is used for each 
     instance template (Karel Vervaeke via asavu)
 
@@ -12,6 +14,8 @@ Trunk (unreleased changes)
     WHIRR-335. Update Hama service to Hama 0.4-incubating (Edward J. Yoon via Frank Scholten)
 
   IMPROVEMENTS
+
+    WHIRR-585. bin/whirr version command does not work (frankscholten)
 
     WHIRR-370. Templating for configuration files (kve)
 

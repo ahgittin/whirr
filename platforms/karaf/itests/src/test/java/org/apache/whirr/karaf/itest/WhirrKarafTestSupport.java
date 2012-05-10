@@ -55,7 +55,7 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 public class WhirrKarafTestSupport {
 
   public static final Long COMMAND_TIMEOUT = 300000L;
-  public static final Long SERVICE_TIMEOUT = 300000L;
+  public static final Long SERVICE_TIMEOUT = 150000L;
 
   public final String GROUP_ID = "org.apache.karaf";
   public final String ARTIFACT_ID = "apache-karaf";
@@ -254,6 +254,9 @@ public class WhirrKarafTestSupport {
 
         throw new RuntimeException("Gave up waiting for service " + flt);
       }
+
+      tracker.close();
+
       return svc;
 
     } catch (InvalidSyntaxException e) {

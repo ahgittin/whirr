@@ -90,7 +90,13 @@ Trunk (unreleased changes)
 
     WHIRR-504. Upgrade to jclouds 1.4.0 (Adrian Cole, Andrei Savu)
 
+    WHIRR-591. Maven profile for Karaf itests (inactive by default) (asavu)
+
+    WHIRR-587. Update version of jopt-simple (from 3.2 to 4.3) (asavu)
+
   BUG FIXES
+
+    WHIRR-582. Yarn service does not build in IntelliJ because of missing Hadoop test dependencies (Frank Scholten)
 
     WHIRR-555. Fix java install script: $(...) -> `...` (kve)
 
@@ -116,6 +122,10 @@ Trunk (unreleased changes)
 
     WHIRR-494. Update the BYON cluster controller to support all the operations the 
     regular controller supports (Cosmin Dumitrache via asavu)
+
+    WHIRR-590. ssh port timeout fails the whole cluster (Doug Daniels via asavu)
+
+    WHIRR-459. DNS Failure when trying to spawn HBase cluster (Alex Heneveld via asavu)
 
 Release 0.7.1 - 2012-02-23
 
